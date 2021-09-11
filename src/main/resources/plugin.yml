@@ -1,0 +1,7 @@
+name: "TNLTrolling"
+main: "net.nonswag.tnl.trolling.Trolling"
+version: "1.0"
+api-version: "1.13"
+depend: ["TNLListener"]
+website: "https://www.thenextlvl.net"
+author: "NonSwag"
