@@ -8,8 +8,8 @@ import net.nonswag.tnl.trolling.listeners.PacketListener;
 public class Trolling extends TNLPlugin {
 
     @Override
-    public void onEnable() {
-        getCommandManager().registerCommands(new TrollCommand());
+    public void enable() {
+        getCommandManager().registerCommand(new TrollCommand());
         getEventManager().registerListener(new PacketListener());
         getEventManager().registerListener(new JoinListener());
     }

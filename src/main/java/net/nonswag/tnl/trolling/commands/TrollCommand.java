@@ -1,11 +1,11 @@
 package net.nonswag.tnl.trolling.commands;
 
-import net.nonswag.tnl.listener.api.command.CommandSource;
-import net.nonswag.tnl.listener.api.command.Invocation;
+import net.nonswag.tnl.core.api.command.CommandSource;
+import net.nonswag.tnl.core.api.command.Invocation;
+import net.nonswag.tnl.core.api.message.Placeholder;
+import net.nonswag.tnl.core.api.message.key.MessageKey;
 import net.nonswag.tnl.listener.api.command.TNLCommand;
-import net.nonswag.tnl.listener.api.language.MessageKey;
-import net.nonswag.tnl.listener.api.message.Message;
-import net.nonswag.tnl.listener.api.message.Placeholder;
+import net.nonswag.tnl.listener.api.command.exceptions.SourceMismatchException;
 import net.nonswag.tnl.listener.api.player.TNLPlayer;
 import net.nonswag.tnl.trolling.api.gui.TrollGUI;
 import org.bukkit.Bukkit;
@@ -26,13 +26,13 @@ public class TrollCommand extends TNLCommand {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
         if (source.isPlayer()) {
-            TNLPlayer player = source.player();
+            TNLPlayer player = (TNLPlayer) source.player();
             if (args.length >= 1) {
                 TNLPlayer victim = TNLPlayer.cast(args[0]);
                 if (victim != null) player.openGUI(TrollGUI.create(victim));
                 else player.sendMessage(MessageKey.PLAYER_NOT_ONLINE, new Placeholder("player", args[0]));
             } else player.sendMessage("%prefix% §c/troll §8[§6Victim§8]");
-        } else source.sendMessage(Message.PLAYER_COMMAND_EN.getText());
+        } else throw new SourceMismatchException();
     }
 
     @Nonnull

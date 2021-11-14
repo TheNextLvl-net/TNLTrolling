@@ -1,6 +1,6 @@
 package net.nonswag.tnl.trolling.api.troll;
 
-import net.nonswag.tnl.listener.api.math.MathUtil;
+import net.nonswag.tnl.core.api.math.MathUtil;
 import net.nonswag.tnl.listener.api.packet.TNLGameStateChange;
 import net.nonswag.tnl.listener.api.player.TNLPlayer;
 import net.nonswag.tnl.trolling.api.errors.OpenGL;

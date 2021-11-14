@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrollGUI extends GUI {
+public final class TrollGUI extends GUI {
 
     private TrollGUI(@Nonnull TNLPlayer victim) {
         super(5, "§8* §6§lTroll§e§lMenu");
