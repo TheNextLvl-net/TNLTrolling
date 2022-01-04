@@ -1,7 +1,7 @@
 package net.nonswag.tnl.trolling.api.troll;
 
 import net.nonswag.tnl.core.api.math.MathUtil;
-import net.nonswag.tnl.listener.api.packet.TNLGameStateChange;
+import net.nonswag.tnl.listener.api.packet.v1_16.R3.GameStateChangePacket;
 import net.nonswag.tnl.listener.api.player.TNLPlayer;
 import net.nonswag.tnl.trolling.api.errors.OpenGL;
 import org.bukkit.Material;
@@ -34,16 +34,16 @@ public class Troll {
     @Nonnull
     public static Troll WEIRD_UI = new Troll("Weird UI", Material.JIGSAW).
             onActivate(player -> {
-                player.sendPacket(TNLGameStateChange.create(7, 14));
-                player.setPlayerTime(0, false);
+                player.sendPacket(new GameStateChangePacket(GameStateChangePacket.RAIN_LEVEL_CHANGE, 14));
+                player.bukkit().setPlayerTime(0, false);
             }).onDeactivate(player -> {
-                player.resetPlayerWeather();
-                player.resetPlayerTime();
+                player.bukkit().resetPlayerWeather();
+                player.bukkit().resetPlayerTime();
             }).register();
     @Nonnull
     public static Troll DEMO = new Troll("Demo Screen", Material.STRUCTURE_BLOCK).onActivate(player -> {
-        player.closeGUI(false);
-        player.sendDemoScreen(TNLPlayer.DemoEvent.WELCOME_SCREEN);
+        player.interfaceManager().closeGUI(false);
+        player.demo(demo -> demo.WELCOME);
     }).setToggleable(false).register();
     @Nonnull
     public static Troll PING_SPOOF = new Troll("Ping Spoof", Material.STRUCTURE_VOID, "In development").register();
@@ -54,11 +54,11 @@ public class Troll {
     @Nonnull
     public static Troll OPENGL_ERROR_SPAMMING = new Troll("OpenGL Error Spamming", Material.GLOWSTONE_DUST).onActivate(player -> {
         OpenGL error = OpenGL.values()[MathUtil.randomInteger(0, OpenGL.values().length - 1)];
-        player.sendMessage(error.getMessage());
+        player.messenger().sendMessage(error.getMessage());
     }).setToggleable(false).register();
     @Nonnull
     public static Troll FREEZE_CLIENT = new Troll("Freeze Client", Material.REDSTONE).onActivate(player ->
-            player.sendPacket(TNLGameStateChange.create(7, 5000))).setToggleable(false).register();
+            player.sendPacket(new GameStateChangePacket(GameStateChangePacket.RAIN_LEVEL_CHANGE, 5000))).setToggleable(false).register();
 
     @Nonnull
     private final String name;

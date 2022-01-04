@@ -29,9 +29,9 @@ public class TrollCommand extends TNLCommand {
             TNLPlayer player = (TNLPlayer) source.player();
             if (args.length >= 1) {
                 TNLPlayer victim = TNLPlayer.cast(args[0]);
-                if (victim != null) player.openGUI(TrollGUI.create(victim));
-                else player.sendMessage(MessageKey.PLAYER_NOT_ONLINE, new Placeholder("player", args[0]));
-            } else player.sendMessage("%prefix% §c/troll §8[§6Victim§8]");
+                if (victim != null) player.interfaceManager().openGUI(TrollGUI.create(victim));
+                else player.messenger().sendMessage(MessageKey.PLAYER_NOT_ONLINE, new Placeholder("player", args[0]));
+            } else player.messenger().sendMessage("%prefix% §c/troll §8[§6Victim§8]");
         } else throw new SourceMismatchException();
     }
 
