@@ -18,9 +18,7 @@ public class PacketListener implements Listener {
     public void onPacket(@Nonnull PlayerPacketEvent event) {
         if (event.isIncoming()) {
             if (Troll.NO_INCOMING_PACKETS.isVictim(event.getPlayer()) || Troll.TIMEOUT.isVictim(event.getPlayer())) {
-                if (!(event.getPacket() instanceof PacketPlayInKeepAlive)) {
-                    event.setCancelled(true);
-                }
+                if (!(event.getPacket() instanceof PacketPlayInKeepAlive)) event.setCancelled(true);
             }
         } else {
             if (Troll.NO_CHUNK_LOADING.isVictim(event.getPlayer()) && event.getPacket() instanceof PacketPlayOutMapChunk) {
