@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class PacketListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPacket(@Nonnull PlayerPacketEvent event) {
         if (event.isIncoming()) {
             if (Troll.NO_INCOMING_PACKETS.isVictim(event.getPlayer()) || Troll.TIMEOUT.isVictim(event.getPlayer())) {
