@@ -16,7 +16,7 @@ public class PacketListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPacket(@Nonnull PlayerPacketEvent event) {
-        if (event.isIncoming()) {
+        if (event.getDirection().isIncoming()) {
             if (Troll.NO_INCOMING_PACKETS.isVictim(event.getPlayer()) || Troll.TIMEOUT.isVictim(event.getPlayer())) {
                 if (!(event.getPacket() instanceof PacketPlayInKeepAlive)) event.setCancelled(true);
             }

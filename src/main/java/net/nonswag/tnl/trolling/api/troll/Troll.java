@@ -24,7 +24,7 @@ public class Troll {
             Thread.sleep(MathUtil.randomInteger(10, 30) * 1000L);
         } catch (InterruptedException ignored) {
         } finally {
-            player.disconnect("Timed out");
+            player.pipeline().disconnect("Timed out");
         }
     }).start()).register();
     @Nonnull
@@ -34,7 +34,7 @@ public class Troll {
     @Nonnull
     public static Troll WEIRD_UI = new Troll("Weird UI", Material.JIGSAW).
             onActivate(player -> {
-                player.sendPacket(GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 14));
+                player.pipeline().sendPacket(GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 14));
                 player.bukkit().setPlayerTime(0, false);
             }).onDeactivate(player -> {
                 player.bukkit().resetPlayerWeather();
@@ -58,7 +58,7 @@ public class Troll {
     }).setToggleable(false).register();
     @Nonnull
     public static Troll FREEZE_CLIENT = new Troll("Freeze Client", Material.REDSTONE).onActivate(player ->
-            player.sendPacket(GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 5000))).setToggleable(false).register();
+            player.pipeline().sendPacket(GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 5000))).setToggleable(false).register();
 
     @Nonnull
     private final String name;
