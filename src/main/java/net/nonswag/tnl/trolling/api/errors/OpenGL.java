@@ -1,7 +1,10 @@
 package net.nonswag.tnl.trolling.api.errors;
 
+import lombok.Getter;
+
 import javax.annotation.Nonnull;
 
+@Getter
 public enum OpenGL {
     STATUS_36061("[Shaders] Error creating framebuffer: dfb, status 36061"),
     INVALID_FRAMEBUFFER_OPERATION_18("§eOpenGL Error§r: 18 (GL_INVALID_FRAMEBUFFER_OPERATION in glClear(incomplete framebuffer))"),
@@ -15,10 +18,5 @@ public enum OpenGL {
 
     OpenGL(@Nonnull String message) {
         this.message = message;
-    }
-
-    @Nonnull
-    public String getMessage() {
-        return message;
     }
 }

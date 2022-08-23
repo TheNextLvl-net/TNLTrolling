@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 
-public class JoinListener implements Listener {
+public class ConnectionListener implements Listener {
 
     @EventHandler
     public void onJoin(@Nonnull TNLPlayerJoinEvent event) {

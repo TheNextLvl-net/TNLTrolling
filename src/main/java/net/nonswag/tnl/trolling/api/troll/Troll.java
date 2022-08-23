@@ -34,7 +34,7 @@ public class Troll {
     @Nonnull
     public static Troll WEIRD_UI = new Troll("Weird UI", Material.JIGSAW).
             onActivate(player -> {
-                player.pipeline().sendPacket(GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 14));
+                GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 14).send(player);
                 player.bukkit().setPlayerTime(0, false);
             }).onDeactivate(player -> {
                 player.bukkit().resetPlayerWeather();
@@ -58,7 +58,7 @@ public class Troll {
     }).setToggleable(false).register();
     @Nonnull
     public static Troll FREEZE_CLIENT = new Troll("Freeze Client", Material.REDSTONE).onActivate(player ->
-            player.pipeline().sendPacket(GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 5000))).setToggleable(false).register();
+            GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 5000).send(player)).setToggleable(false).register();
 
     @Nonnull
     private final String name;
