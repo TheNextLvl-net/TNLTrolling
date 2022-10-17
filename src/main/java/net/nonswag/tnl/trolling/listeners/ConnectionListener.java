@@ -13,6 +13,8 @@ public class ConnectionListener implements Listener {
     @EventHandler
     public void onJoin(@Nonnull TNLPlayerJoinEvent event) {
         TNLPlayer player = event.getPlayer();
-        for (Troll troll : Troll.getTrolls()) if (troll.isVictim(player)) troll.addVictim(player);
+        Troll.TROLLS.forEach(troll -> {
+            if (troll.isVictim(player)) troll.addVictim(player);
+        });
     }
 }

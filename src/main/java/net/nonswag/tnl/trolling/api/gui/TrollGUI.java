@@ -19,7 +19,7 @@ public final class TrollGUI extends GUI {
         super(5, "§8* §6§lTroll§e§lMenu");
         formatDefault();
         setItem(13, TNLItem.create(victim).setName("§8* §7Victim§8: §6" + victim.getName()));
-        update(Troll.getTrolls(), victim);
+        update(Troll.TROLLS, victim);
     }
 
     @Nonnull
@@ -30,10 +30,10 @@ public final class TrollGUI extends GUI {
         for (int i = 0; i < 3; i++) remove(23 + i);
         for (int i = 0; i < 5; i++) remove(29 + i);
         List<Troll> overflow = new ArrayList<>();
-        for (Troll troll : trolls) {
+        trolls.forEach(troll -> {
             try {
                 TNLItem item = TNLItem.create(troll.getIcon()).setName("§8* §7Troll§8: §6" + troll.getName());
-                if (troll.getDescription() != null) item.setLore("§8* §7Description§8: §6" + troll.getDescription());
+                if (troll.getDescription() != null) item.withLore("§8* §7Description§8: §6" + troll.getDescription());
                 if (troll.isToggleable()) item.addLore("§8* §7Active§8: §6" + troll.isVictim(victim));
                 addItem(item.toGUIItem().addInteractions(new Interaction(player1 -> {
                     if (troll.isVictim(victim)) troll.removeVictim(victim);
@@ -43,7 +43,7 @@ public final class TrollGUI extends GUI {
             } catch (GUIOverflowException e) {
                 overflow.add(troll);
             }
-        }
+        });
         if (overflow.isEmpty()) {
             for (int i = 0; i < getSize(); i++) {
                 setItemIfAbsent(i, TNLItem.create(Material.RED_STAINED_GLASS_PANE).setName("§8* §7Troll§8: §7-§8/§7-"));

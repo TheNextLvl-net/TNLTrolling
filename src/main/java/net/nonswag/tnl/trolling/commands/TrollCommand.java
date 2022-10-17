@@ -1,14 +1,13 @@
 package net.nonswag.tnl.trolling.commands;
 
-import net.nonswag.tnl.core.api.command.CommandSource;
-import net.nonswag.tnl.core.api.command.Invocation;
-import net.nonswag.tnl.core.api.message.Placeholder;
-import net.nonswag.tnl.core.api.message.key.MessageKey;
+import net.nonswag.core.api.command.CommandSource;
+import net.nonswag.core.api.command.Invocation;
 import net.nonswag.tnl.listener.api.command.TNLCommand;
+import net.nonswag.tnl.listener.api.command.exceptions.InvalidUseException;
+import net.nonswag.tnl.listener.api.command.exceptions.PlayerNotOnlineException;
 import net.nonswag.tnl.listener.api.player.TNLPlayer;
 import net.nonswag.tnl.trolling.api.gui.TrollGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -18,30 +17,29 @@ public class TrollCommand extends TNLCommand {
 
     public TrollCommand() {
         super("troll", "tnl.troll");
+        setUsage("%prefix% §c/troll §8[§6Victim§8]");
     }
 
     @Override
     protected void execute(@Nonnull Invocation invocation) {
-        CommandSource source = invocation.source();
+        TNLPlayer player = (TNLPlayer) invocation.source();
         String[] args = invocation.arguments();
-        TNLPlayer player = (TNLPlayer) source.player();
-        if (args.length >= 1) {
-            TNLPlayer victim = TNLPlayer.cast(args[0]);
-            if (victim != null) player.interfaceManager().openGUI(TrollGUI.create(victim));
-            else player.messenger().sendMessage(MessageKey.PLAYER_NOT_ONLINE, new Placeholder("player", args[0]));
-        } else player.messenger().sendMessage("%prefix% §c/troll §8[§6Victim§8]");
-    }
-
-    @Override
-    public boolean canUse(@Nonnull CommandSource source) {
-        return source.isPlayer();
+        if (args.length < 1) throw new InvalidUseException(this);
+        TNLPlayer victim = TNLPlayer.cast(args[0]);
+        if (victim == null) throw new PlayerNotOnlineException(args[0]);
+        player.interfaceManager().openGUI(TrollGUI.create(victim));
     }
 
     @Nonnull
     @Override
     protected List<String> suggest(@Nonnull Invocation invocation) {
         List<String> suggestions = new ArrayList<>();
-        for (Player all : Bukkit.getOnlinePlayers()) suggestions.add(all.getName());
+        Bukkit.getOnlinePlayers().forEach(all -> suggestions.add(all.getName()));
         return suggestions;
+    }
+
+    @Override
+    public boolean canUse(@Nonnull CommandSource source) {
+        return source.isPlayer();
     }
 }

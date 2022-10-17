@@ -1,6 +1,7 @@
 package net.nonswag.tnl.trolling.api.troll;
 
-import net.nonswag.tnl.core.api.math.MathUtil;
+import lombok.Getter;
+import net.nonswag.core.api.math.MathUtil;
 import net.nonswag.tnl.listener.api.packets.GameStateChangePacket;
 import net.nonswag.tnl.listener.api.player.TNLPlayer;
 import net.nonswag.tnl.trolling.api.errors.OpenGL;
@@ -13,10 +14,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+@Getter
 public class Troll {
 
     @Nonnull
-    private static final List<Troll> trolls = new ArrayList<>();
+    public static final List<Troll> TROLLS = new ArrayList<>();
 
     @Nonnull
     public static Troll TIMEOUT = new Troll("Timeout", Material.COMMAND_BLOCK).onActivate(player -> new Thread(() -> {
@@ -86,30 +88,6 @@ public class Troll {
     }
 
     @Nonnull
-    public String getName() {
-        return name;
-    }
-
-    @Nonnull
-    public Material getIcon() {
-        return icon;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    @Nonnull
-    public Consumer<TNLPlayer> getActivateAction() {
-        return activateAction;
-    }
-
-    public Consumer<TNLPlayer> getDeactivateAction() {
-        return deactivateAction;
-    }
-
-    @Nonnull
     public Troll onActivate(@Nonnull Consumer<TNLPlayer> activateAction) {
         this.activateAction = activateAction;
         return this;
@@ -121,19 +99,10 @@ public class Troll {
         return this;
     }
 
-    public boolean isToggleable() {
-        return toggleable;
-    }
-
     @Nonnull
     public Troll setToggleable(boolean toggleable) {
         this.toggleable = toggleable;
         return this;
-    }
-
-    @Nonnull
-    public List<UUID> getVictims() {
-        return victims;
     }
 
     public boolean isVictim(@Nonnull TNLPlayer player) {
@@ -156,16 +125,11 @@ public class Troll {
 
     @Nonnull
     public Troll register() {
-        if (!getTrolls().contains(this)) getTrolls().add(this);
+        if (!TROLLS.contains(this)) TROLLS.add(this);
         return this;
     }
 
     public void unregister() {
-        getTrolls().remove(this);
-    }
-
-    @Nonnull
-    public static List<Troll> getTrolls() {
-        return trolls;
+        TROLLS.remove(this);
     }
 }
