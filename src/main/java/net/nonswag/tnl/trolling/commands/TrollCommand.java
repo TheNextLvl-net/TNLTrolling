@@ -40,6 +40,6 @@ public class TrollCommand extends TNLCommand {
 
     @Override
     public boolean canUse(@Nonnull CommandSource source) {
-        return source.isPlayer();
+        return source instanceof TNLPlayer;
     }
 }

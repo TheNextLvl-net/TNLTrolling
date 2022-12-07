@@ -1,9 +1,16 @@
 package net.nonswag.tnl.trolling.api.troll;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
+import net.nonswag.core.api.annotation.FieldsAreNonnullByDefault;
 import net.nonswag.core.api.math.MathUtil;
-import net.nonswag.tnl.listener.api.packets.GameStateChangePacket;
+import net.nonswag.tnl.listener.api.packets.outgoing.DisconnectPacket;
+import net.nonswag.tnl.listener.api.packets.outgoing.GameEventPacket;
 import net.nonswag.tnl.listener.api.player.TNLPlayer;
+import net.nonswag.tnl.trolling.api.errors.Internal;
 import net.nonswag.tnl.trolling.api.errors.OpenGL;
 import org.bukkit.Material;
 
@@ -15,13 +22,12 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 @Getter
+@Setter
+@RequiredArgsConstructor
+@FieldsAreNonnullByDefault
 public class Troll {
-
-    @Nonnull
     public static final List<Troll> TROLLS = new ArrayList<>();
-
-    @Nonnull
-    public static Troll TIMEOUT = new Troll("Timeout", Material.COMMAND_BLOCK).onActivate(player -> new Thread(() -> {
+    public static final Troll TIMEOUT = new Troll("Timeout", Material.COMMAND_BLOCK).activate(player -> new Thread(() -> {
         try {
             Thread.sleep(MathUtil.randomInteger(10, 30) * 1000L);
         } catch (InterruptedException ignored) {
@@ -29,101 +35,68 @@ public class Troll {
             player.pipeline().disconnect("Timed out");
         }
     }).start()).register();
-    @Nonnull
-    public static Troll NO_INCOMING_PACKETS = new Troll("Block Incoming Packets", Material.REPEATING_COMMAND_BLOCK).register();
-    @Nonnull
-    public static Troll NO_OUTGOING_PACKETS = new Troll("Block Outgoing Packets", Material.CHAIN_COMMAND_BLOCK).register();
-    @Nonnull
-    public static Troll WEIRD_UI = new Troll("Weird UI", Material.JIGSAW).
-            onActivate(player -> {
-                GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 14).send(player);
+    public static final Troll NO_INCOMING_PACKETS = new Troll("Block Incoming Packets", Material.REPEATING_COMMAND_BLOCK).register();
+    public static final Troll NO_OUTGOING_PACKETS = new Troll("Block Outgoing Packets", Material.CHAIN_COMMAND_BLOCK).register();
+    public static final Troll WEIRD_UI = new Troll("Weird UI", Material.JIGSAW).
+            activate(player -> {
+                GameEventPacket.create(GameEventPacket.RAIN_LEVEL_CHANGE, 14).send(player);
                 player.bukkit().setPlayerTime(0, false);
-            }).onDeactivate(player -> {
+            }).deactivate(player -> {
                 player.bukkit().resetPlayerWeather();
                 player.bukkit().resetPlayerTime();
             }).register();
-    @Nonnull
-    public static Troll DEMO = new Troll("Demo Screen", Material.STRUCTURE_BLOCK).onActivate(player -> {
+    public static final Troll DEMO = new Troll("Demo Screen", Material.STRUCTURE_BLOCK).activate(player -> {
         player.interfaceManager().closeGUI(false);
-        player.interfaceManager().demo(demo -> demo.WELCOME);
+        player.interfaceManager().demo(demo -> (float) demo.INTRO);
     }).setToggleable(false).register();
-    @Nonnull
-    public static Troll PING_SPOOF = new Troll("Ping Spoof", Material.STRUCTURE_VOID, "In development").register();
-    @Nonnull
-    public static Troll NO_CHUNK_LOADING = new Troll("Block Chunk Loading", Material.BARRIER).register();
-    @Nonnull
-    public static Troll DELAY_MOVEMENTS = new Troll("Delay Movements", Material.GUNPOWDER, "In development").register();
-    @Nonnull
-    public static Troll OPENGL_ERROR_SPAMMING = new Troll("OpenGL Error Spamming", Material.GLOWSTONE_DUST).onActivate(player -> {
+    public static final Troll PING_SPOOF = new Troll("Ping Spoof", Material.STRUCTURE_VOID, "In development").register();
+    public static final Troll NO_CHUNK_LOADING = new Troll("Block Chunk Loading", Material.BARRIER).register();
+    public static final Troll DELAY_MOVEMENTS = new Troll("Delay Movements", Material.GUNPOWDER, "In development").register();
+    public static final Troll OPENGL_ERROR_SPAMMING = new Troll("OpenGL Error Spamming", Material.GLOWSTONE_DUST).activate(player -> {
         OpenGL error = OpenGL.values()[MathUtil.randomInteger(0, OpenGL.values().length - 1)];
         player.messenger().sendMessage(error.getMessage());
     }).setToggleable(false).register();
-    @Nonnull
-    public static Troll FREEZE_CLIENT = new Troll("Freeze Client", Material.REDSTONE).onActivate(player ->
-            GameStateChangePacket.create(GameStateChangePacket.RAIN_LEVEL_CHANGE, 5000).send(player)).setToggleable(false).register();
+    public static final Troll RANDOM_EXCEPTION = new Troll("Random Exception", Material.SKELETON_SKULL).activate(player -> {
+        Internal error = Internal.values()[MathUtil.randomInteger(0, Internal.values().length - 1)];
+        DisconnectPacket.create(Component.text(error.getMessage())).send(player);
+    }).setToggleable(false).register();
+    public static final Troll FREEZE_CLIENT = new Troll("Freeze Client", Material.REDSTONE).activate(player ->
+            GameEventPacket.create(GameEventPacket.RAIN_LEVEL_CHANGE, 5000).send(player)).setToggleable(false).register();
 
-    @Nonnull
     private final String name;
-    @Nonnull
     private final Material icon;
     @Nullable
     private final String description;
-    @Nonnull
-    private Consumer<TNLPlayer> activateAction = player -> {
+    @Accessors(fluent = true, chain = true)
+    private Consumer<TNLPlayer> activate = player -> {
     };
-    private Consumer<TNLPlayer> deactivateAction = player -> {
+    @Accessors(fluent = true, chain = true)
+    private Consumer<TNLPlayer> deactivate = player -> {
     };
-    @Nonnull
     private final List<UUID> victims = new ArrayList<>();
+    @Accessors(chain = true)
     boolean toggleable = true;
 
     public Troll(@Nonnull String name, @Nonnull Material icon) {
         this(name, icon, null);
     }
 
-    public Troll(@Nonnull String name, @Nonnull Material icon, @Nullable String description) {
-        this.name = name;
-        this.icon = icon;
-        this.description = description;
-    }
-
-    @Nonnull
-    public Troll onActivate(@Nonnull Consumer<TNLPlayer> activateAction) {
-        this.activateAction = activateAction;
-        return this;
-    }
-
-    @Nonnull
-    public Troll onDeactivate(Consumer<TNLPlayer> deactivateAction) {
-        this.deactivateAction = deactivateAction;
-        return this;
-    }
-
-    @Nonnull
-    public Troll setToggleable(boolean toggleable) {
-        this.toggleable = toggleable;
-        return this;
-    }
-
     public boolean isVictim(@Nonnull TNLPlayer player) {
         return getVictims().contains(player.getUniqueId()) && isToggleable();
     }
 
-    @Nonnull
     public Troll addVictim(@Nonnull TNLPlayer player) {
         if (!isVictim(player) && isToggleable()) getVictims().add(player.getUniqueId());
-        getActivateAction().accept(player);
+        activate().accept(player);
         return this;
     }
 
-    @Nonnull
     public Troll removeVictim(@Nonnull TNLPlayer player) {
         getVictims().remove(player.getUniqueId());
-        getDeactivateAction().accept(player);
+        deactivate().accept(player);
         return this;
     }
 
-    @Nonnull
     public Troll register() {
         if (!TROLLS.contains(this)) TROLLS.add(this);
         return this;

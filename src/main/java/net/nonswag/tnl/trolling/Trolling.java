@@ -1,22 +1,42 @@
 package net.nonswag.tnl.trolling;
 
+import net.nonswag.tnl.listener.api.packets.incoming.KeepAlivePacket;
+import net.nonswag.tnl.listener.api.packets.incoming.PacketBuilder;
+import net.nonswag.tnl.listener.api.packets.outgoing.DisconnectPacket;
+import net.nonswag.tnl.listener.api.packets.outgoing.MapChunkPacket;
 import net.nonswag.tnl.listener.api.plugin.PluginUpdate;
 import net.nonswag.tnl.listener.api.plugin.TNLPlugin;
 import net.nonswag.tnl.listener.api.settings.Settings;
-import net.nonswag.tnl.listener.api.version.Version;
+import net.nonswag.tnl.trolling.api.troll.Troll;
 import net.nonswag.tnl.trolling.commands.TrollCommand;
 import net.nonswag.tnl.trolling.listeners.ConnectionListener;
-import net.nonswag.tnl.trolling.listeners.PacketListener;
 
 public class Trolling extends TNLPlugin {
 
     @Override
     public void enable() {
         getCommandManager().registerCommand(new TrollCommand());
-        getEventManager().registerListener(Version.v1_16_4, PacketListener::new);
         getEventManager().registerListener(new ConnectionListener());
         async(() -> {
             if (Settings.AUTO_UPDATER.getValue()) new PluginUpdate(this).downloadUpdate();
+        });
+    }
+
+    private void registerPacketReaders() {
+        getEventManager().registerPacketReader(PacketBuilder.class, (player, packet, cancelled) -> {
+            if (!Troll.NO_INCOMING_PACKETS.isVictim(player) && !Troll.TIMEOUT.isVictim(player)) return;
+            if (!(packet instanceof KeepAlivePacket)) cancelled.set(true);
+        });
+    }
+
+    private void registerPacketWriters() {
+        getEventManager().registerPacketWriter(MapChunkPacket.class, (player, packet, cancelled) -> {
+            if (Troll.NO_CHUNK_LOADING.isVictim(player)) cancelled.set(true);
+        });
+        getEventManager().registerPacketWriter(net.nonswag.tnl.listener.api.packets.outgoing.PacketBuilder.class, (player, packet, cancelled) -> {
+            if (!Troll.NO_OUTGOING_PACKETS.isVictim(player) && !Troll.TIMEOUT.isVictim(player)) return;
+            if (packet instanceof net.nonswag.tnl.listener.api.packets.outgoing.KeepAlivePacket) return;
+            if (!(packet instanceof DisconnectPacket)) cancelled.set(true);
         });
     }
 }
