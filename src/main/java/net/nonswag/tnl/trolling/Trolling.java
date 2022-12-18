@@ -21,6 +21,8 @@ public class Trolling extends TNLPlugin {
     @Override
     public void enable() {
         instance = this;
+        registerPacketReaders();
+        registerPacketWriters();
         getCommandManager().registerCommand(new TrollCommand());
         getEventManager().registerListener(new ConnectionListener());
         async(() -> {
