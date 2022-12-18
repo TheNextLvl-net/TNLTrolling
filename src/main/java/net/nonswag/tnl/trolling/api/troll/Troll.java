@@ -35,10 +35,7 @@ public class Troll {
     public static final Troll NO_OUTGOING_PACKETS = new Troll("Block Outgoing Packets", Material.CHAIN_COMMAND_BLOCK).register();
     public static final Troll DEMO = new Troll("Demo Screen", Material.STRUCTURE_BLOCK).activate(player -> {
         player.interfaceManager().closeGUI(false);
-        for (int i = 0; i < 1000; i++) {
-            int finalI = i;
-            player.interfaceManager().demo(input -> (float) finalI);
-        }
+        player.interfaceManager().demo(demo -> (float) demo.INTRO);
     }).setToggleable(false).register();
     public static final Troll NO_CHUNK_LOADING = new Troll("Block Chunk Loading", Material.BARRIER).register();
     public static final Troll OPENGL_ERROR_SPAMMING = new Troll("OpenGL Error Spamming", Material.GLOWSTONE_DUST, "Shows a random error").activate(player -> {
